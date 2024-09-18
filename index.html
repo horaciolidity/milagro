@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagar con tarjeta</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Realizar pago</h2>
+        <form id="payment-form">
+            <div id="card-element">
+                <!-- A Stripe Element will be inserted here. -->
+            </div>
+            <button id="submit">Pagar</button>
+            <div id="error-message" role="alert"></div>
+        </form>
+    </div>
+
+    <script>
+        var stripe = Stripe('TU_CLAVE_PUBLICA_STRIPE');
+        var elements = stripe.elements();
+
+        var card = elements.create('card');
+        card.mount('#card-element');
+
+        var form = document.getElementById('payment-form');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Muestra el error al cliente.
+                    var errorElement = document.getElementById('error-message');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Envía el token a tu servidor.
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        function stripeTokenHandler(token) {
+            // Aquí se manejará el token, normalmente enviándolo a tu backend.
+            console.log(token);
+        }
+    </script>
+</body>
+</html>
